@@ -22,10 +22,13 @@ digraph structs {
         glFramebufferTexturenD_dst[label=""];
         glFramebufferTexturenD_src->glFramebufferTexturenD_dst[label="glFramebufferTexturenD",color=green,fontcolor=green,style=dashed];
 
+        GLSL[color="#550055",style=filled,fontcolor="white",fontname="consolas"];
+
     }
 
     // buffers
 
+    GL_SHADER_STORAGE_BUFFER[label="GL_SHADER_STORAGE_BUFFER\nglGenBuffers(1, &ssbo);\nglBindBuffer(~, ssbo);\nglBufferData();\nglBindBufferBase(~,n, ssbo);\n"];
     GL_TRANSFORM_FEEDBACK_BUFFER[label="GL_TRANSFORM_FEEDBACK_BUFFER\nglGenBuffers\nglBindBuffer"];
 
     // pixel pack unpack
@@ -35,6 +38,21 @@ digraph structs {
         GL_PIXEL_PACK_BUFFER[label="GL_PIXEL_PACK_BUFFER\nglBindBuffer( ~ , pbo or 0(ram))"];
         GL_PIXEL_UNPACK_BUFFER[label="GL_PIXEL_UNPACK_BUFFER\nglBindBuffer( ~ , pbo  or 0(ram))"];
     }
+
+    // GLSL
+    glsl_texture[label="texture()",color="#550055",style=filled,fontcolor="white",fontname="consolas"];
+    GL_TEXTURE_nD->glsl_texture[color = "#aa00aa"];
+    GL_TEXTURE_nD_ARRAY->glsl_texture[color = "#aa00aa"];
+
+    glsl_texelFetch[label="texelFetch()",color="#550055",style=filled,fontcolor="white",fontname="consolas"];
+    GL_TEXTURE_nD->glsl_texelFetch[color = "#aa00aa"];
+    GL_TEXTURE_nD_ARRAY->glsl_texelFetch[color = "#aa00aa"];
+
+    glsl_imageLoad[label="imageLoad()\nimageStore()",color="#550055",style=filled,fontcolor="white",fontname="consolas"];
+    imagenD,image2DRect,imageBuffer,imageCube,imagenDArray->glsl_imageLoad[color = "#aa00aa",dir=both];
+
+    glsl_buffer[label="buffer",color="#550055",style=filled,fontcolor="white",fontname="consolas"];
+    glsl_buffer->GL_SHADER_STORAGE_BUFFER[color="#aa00aa",dir=both];
 
     // ram
     RAM[label="System Memery",color=red];
@@ -88,10 +106,10 @@ digraph structs {
         imageBuffer;
     }
     
-
-    GL_COPY_READ_BUFFER[label = "GL_COPY_READ_BUFFER\nglBindBuffer( ~ , pbo)"];
-
-    GL_COPY_WRITE_BUFFER[label = "GL_COPY_WRITE_BUFFER\nglBindBuffer( ~ , pbo)"];
+    subgraph cluster_copy{
+        GL_COPY_READ_BUFFER[label = "GL_COPY_READ_BUFFER\nglBindBuffer( ~ , pbo)"];
+        GL_COPY_WRITE_BUFFER[label = "GL_COPY_WRITE_BUFFER\nglBindBuffer( ~ , pbo)"];
+    }
 
     // api
     GL_PIXEL_UNPACK_BUFFER->GL_TEXTURE_nD[label="glTexImagenD"];
@@ -114,6 +132,7 @@ digraph structs {
     GL_TEXTURE_BUFFER->GL_TEXTURE_BUFFER[dir=both,color=blue];
     GL_TRANSFORM_FEEDBACK_BUFFER->GL_TRANSFORM_FEEDBACK_BUFFER[dir=both,color=blue];
     GL_UNIFORM_BUFFER->GL_UNIFORM_BUFFER[dir=both,color=blue];
+    GL_SHADER_STORAGE_BUFFER->GL_SHADER_STORAGE_BUFFER[dir=both,color=blue];
 
     //glBufferData
     RAM->GL_ARRAY_BUFFER[color=red];
