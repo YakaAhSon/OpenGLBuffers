@@ -1,10 +1,15 @@
 digraph structs {
+    labeljust=l;
     node[shape=record];
     // buffers
     GL_PIXEL_PACK_BUFFER[label="GL_PIXEL_PACK_BUFFER\nglBindBuffer( ~ , pbo or 0(ram))"];
     GL_PIXEL_UNPACK_BUFFER[label="GL_PIXEL_UNPACK_BUFFER\nglBindBuffer( ~ , pbo  or 0(ram))"];
 
+    // ram
+    RAM[label="System Memery",color=blue];
+
     subgraph cluster_texture{
+        labeljust=l;
         label="GL_ACTIVE_TEXTURE\nglActiveTexture(GL_TEXTUREn)";
         GL_TEXTURE_nD[label="GL_TEXTURE_nD\nglBindTexture( ~ ,texture)"];
         GL_TEXTURE_nD_ARRAY[label="GL_TEXTURE_nD_ARRAY\nglBindTexture( ~ ,texture)"];
@@ -12,6 +17,7 @@ digraph structs {
     }
 
     subgraph cluster_fbo_draw{
+        labeljust=l;
         label="GL_DRAW_FRAMEBUFFER\nglGenFramebuffers(1,&fbo);\nglBindFramebuffer( ~ , fbo);"
         RBO_draw[shape=plaintext,label="Render Buffer API:\nglGenRenderbuffers(n,&rbos);\nglBindRenderbuffer(GL_RENDERBUFFER,rbo);\nglRenderbufferStorage(...);"];
         GL_DEPTH_ATTACHMENT_draw[label="GL_DEPTH_ATTACHMENT\nglFramebufferRenderbuffer"];
@@ -21,6 +27,7 @@ digraph structs {
     }
 
     subgraph cluster_fbo_read{
+        labeljust=l;
         label="GL_READ_FRAMEBUFFER\nglGenFramebuffers(1,&fbo);\nglBindFramebuffer( ~ , fbo);"
         GL_DEPTH_ATTACHMENT_read[label="GL_DEPTH_ATTACHMENT\nglFramebufferRenderbuffer"];
         GL_STENCIL_ATTACHMENT_read[label="GL_STENCIL_ATTACHMENT\nglFramebufferRenderbuffer"];
@@ -36,11 +43,15 @@ digraph structs {
     // api
     GL_PIXEL_UNPACK_BUFFER->GL_TEXTURE_nD[label="glTexImagenD"];
 
+    RAM->GL_PIXEL_UNPACK_BUFFER[style=dashed,label="glBindBuffer(~,0)"];
+
+    RAM->GL_PIXEL_PACK_BUFFER[style=dashed,label="glBindBUffer(~,0)"];
+
     GL_READ_BUFFER->GL_PIXEL_PACK_BUFFER[label="glReadPixels"];
     
     GL_TEXTURE_nD->GL_PIXEL_PACK_BUFFER[label="glGetTexImage"];
 
-    
+    // glCopyBufferSubData
     glCopyBufferSubData[shape=plaintext];
     glCopyBufferSubData->GL_COPY_READ_BUFFER[dir=both];
     glCopyBufferSubData->GL_COPY_WRITE_BUFFER[dir=both];
@@ -51,6 +62,32 @@ digraph structs {
     glCopyBufferSubData->GL_TEXTURE_BUFFER[dir=both];
     glCopyBufferSubData->GL_TRANSFORM_FEED_BACK_BUFFER[dir=both];
     glCopyBufferSubData->GL_UNIFORM_BUFFER[dir=both];
+
+    //glBufferData
+    glBufferData_source[label=""];
+    glBufferData_dst[label=""];
+    glBufferData_source->glBufferData_dst[label="glBufferData",color=red,fontcolor=red];
+    RAM->GL_ARRAY_BUFFER[color=red];
+    RAM->GL_ATOMIC_COUNTER_BUFFER[color=red];
+    RAM->GL_COPY_READ_BUFFER[color=red];
+    RAM->GL_COPY_WRITE_BUFFER[color=red];
+    RAM->GL_DISPATCH_INDIRECT_BUFFER[color=red];
+    RAM->GL_DRAW_INDIRECT_BUFFER[color=red];
+    RAM->GL_ELEMENT_ARRAY_BUFFER[color=red];
+    RAM->GL_PIXEL_PACK_BUFFER[color=red];
+    RAM->GL_PIXEL_UNPACK_BUFFER[color=red];
+    RAM->GL_QUERY_BUFFER[color=red];
+    RAM->GL_SHADER_STORAGE_BUFFER[color=red];
+    RAM->GL_TEXTURE_BUFFER[color=red];
+    RAM->GL_TRANSFORM_FEEDBACK_BUFFER[color=red];
+    RAM->GL_UNIFORM_BUFFER[color=red];
+
+    // glMapBuffer
+    glMapBuffer_source[label=""];
+    glMapBuffer_dst[label=""];
+    glMapBuffer_source->glMapBuffer_dst[label="glMapBuffer",color=red,fontcolor=red,style=dashed];
+    GL_ARRAY_BUFFER,GL_ATOMIC_COUNTER_BUFFER,GL_COPY_READ_BUFFER,GL_COPY_WRITE_BUFFER,GL_DISPATCH_INDIRECT_BUFFER,GL_DRAW_INDIRECT_BUFFER,GL_ELEMENT_ARRAY_BUFFER,GL_PIXEL_PACK_BUFFER,GL_PIXEL_UNPACK_BUFFER,GL_QUERY_BUFFER,GL_SHADER_STORAGE_BUFFER,GL_TEXTURE_BUFFER,GL_TRANSFORM_FEEDBACK_BUFFER,GL_UNIFORM_BUFFER->RAM[style=dashed,color=red];
+    
 
     GL_READ_BUFFER->GL_DRAW_BUFFER[label="glBlitFramebuffer"];
 
